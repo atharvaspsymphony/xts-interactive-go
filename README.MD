@@ -260,3 +260,13 @@ DELETE /user/session
 ```go
 response,err = interactive.Logout()
 ```
+
+## Instantiating the XtsInteractive Websocket
+This component provides functionality to access the socket related events. All real-time events can be registered. After token is generated, you can access the socket component and instantiate the socket.
+
+Note:- XTS Interactive WebSocket is based on "https://socket.io/" library. This library is available in most of the programming languages. In this package code third-party socket-io library is used to make client connection for socket. This is just an example to make connection for websocket.
+
+```go
+response, err := interactive.Login(url, loginPayload)
+interactive.Socket(url, Token, clientID)
+```
