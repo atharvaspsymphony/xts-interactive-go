@@ -12,10 +12,10 @@ var (
 )
 
 const (
-	secretKey = "Epwe008@E6"
-	appKey    = "df4f7ad5400d7b88fb9685"
+	secretKey = ""
+	appKey    = ""
 	source    = "WebAPI"
-	url       = "http://103.181.209.198:11091"
+	url       = ""
 )
 
 func main() {
