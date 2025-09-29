@@ -96,25 +96,6 @@ var ConvertPositionPayload = interactive.ConvertPositionRequest{
 response, err := interactive.ConvertPosition(ConvertPositionPayload)
 ```
 
-### SquareOff
-PUT /portfolio/positions/squareoff
-```go
-var squareoffallPayload = interactive.SquareOffAllRequest{
-    SquareOffMode: "NetWise",
-    ClientID:      clientID,
-}
-response, err := interactive.SquareOff(SquareOffPayload)
-```
-
-### SquareOffAll
-PUT /portfolio/positions/squareoffall
-```go
-var squareoffallPayload = interactive.SquareOffAllRequest{
-    SquareOffMode: "NetWise",
-    ClientID:      clientID,
-}
-response, err := interactive.SquareOffAll(squareoffallPayload)
-```
 
 ### Place Order
 POST /orders

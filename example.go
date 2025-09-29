@@ -2,13 +2,14 @@ package main
 
 import (
 	"fmt"
-
+	// "time"
 	interactive "test/api"
 )
 
 var (
 	clientID = ""
 	Token    = ""
+	uniqueKey = ""
 )
 
 const (
@@ -18,174 +19,259 @@ const (
 	url       = ""
 )
 
+// const (
+// 	secretKey = "Udii822#@V"
+// 	appKey    = "07f2d388d2022a9a58c543"
+// 	source    = "WebAPI"
+// 	url       = "http://160.30.125.86:11091"
+// )
+
+
+
 func main() {
-	//login
+	//Hostlookup
+	var hostlookupPayload = interactive.HostlookupRequest{
+		AccessPassword: "2021HostLookUpAccess",
+		Version: "interactive_1.0.2",
+	}
+	Hostlookup(hostlookupPayload)
+
+
+	// login
 	var loginPayload = interactive.LoginRequest{
 		SecretKey: secretKey,
 		AppKey:    appKey,
 		Source:    "WebAPI",
 	}
 	login(loginPayload)
-	interactive.Socket(url, Token, clientID)
 
-	// Balance
-	getBalance()
 
-	// Profile
-	getProfile()
 
-	// ExchangeMessage
-	getExchangeMessage()
+	go websocketListner()
+	select {}
 
-	// ExchangeStatus
-	getExchangeStaus()
+
+
+	// // Balance
+	// getBalance()
+
+	// // Profile
+	// getProfile()
+
+	// // ExchangeMessage
+	// getExchangeMessage()
+
+	// // ExchangeStatus
+	// getExchangeStaus()
 
 	// Placeorder
-	var PlaceOrderPayload = interactive.PlaceOrderRequest{
-		ExchangeSegment:       "NSECM",
-		ExchangeInstrumentID:  "2029",
-		ProductType:           "NRML",
-		OrderType:             "MARKET",
-		OrderSide:             "BUY",
-		TimeInForce:           "DAY",
-		DisclosedQuantity:     0,
-		OrderQuantity:         15,
-		LimitPrice:            185,
-		StopPrice:             190,
-		OrderUniqueIdentifier: "123abc",
-	}
-	placeorder(PlaceOrderPayload)
+	// time.Sleep(2 * time.Second)
+	// var PlaceOrderPayload = interactive.PlaceOrderRequest{
+	// 	ExchangeSegment:       "NSECM",
+	// 	ExchangeInstrumentID:  "2885",
+	// 	ProductType:           "NRML",
+	// 	OrderType:             "MARKET",
+	// 	OrderSide:             "BUY",
+	// 	TimeInForce:           "DAY",
+	// 	DisclosedQuantity:     0,
+	// 	OrderQuantity:         1,
+	// 	LimitPrice:            1400,
+	// 	StopPrice:             0,
+	// 	OrderUniqueIdentifier: "123abc",
+	// }
+	// placeorder(PlaceOrderPayload)
+	
 
-	// ModifyOrder
-	var ModifyOrderPayload = interactive.ModifyOrderRequest{
-		AppOrderID:                "1210903429",
-		ModifiedProductType:       "NRML",
-		ModifiedOrderType:         "MARKET",
-		ModifiedOrderQuantity:     2,
-		ModifiedDisclosedQuantity: 0,
-		ModifiedLimitPrice:        2640,
-		ModifiedStopPrice:         2650,
-		ModifiedTimeInForce:       "DAY",
-	}
-	modifyorder(ModifyOrderPayload)
+	// // ModifyOrder
+	// var ModifyOrderPayload = interactive.ModifyOrderRequest{
+	// 	AppOrderID:                "1210903429",
+	// 	ModifiedProductType:       "NRML",
+	// 	ModifiedOrderType:         "MARKET",
+	// 	ModifiedOrderQuantity:     2,
+	// 	ModifiedDisclosedQuantity: 0,
+	// 	ModifiedLimitPrice:        2640,
+	// 	ModifiedStopPrice:         2650,
+	// 	ModifiedTimeInForce:       "DAY",
+	// }
+	// modifyorder(ModifyOrderPayload)
 
-	// cancelOrder
-	var appOrderID = "1210903563"
-	cancelOrder(appOrderID)
+	// // cancelOrder
+	// var appOrderID = "1210903563"
+	// cancelOrder(appOrderID)
 
-	// OrderBook
-	getOrderBook()
+	// // OrderBook
+	// getOrderBook()
 
-	// OrderHistory
-	getOrdreHistory(appOrderID)
+	// // OrderHistory
+	// getOrdreHistory(appOrderID)
 
-	// TradeBook
-	getTradeBook()
+	// // TradeBook
+	// getTradeBook()
 
-	// Holdings
-	getHoldings()
+	// // Holdings
+	// getHoldings()
 
-	// Positions
-	var dayOrNet = "DayWise"
-	getPositions(dayOrNet)
+	// // Positions
+	// var dayOrNet = "DayWise"
+	// getPositions(dayOrNet)
 
-	// Squareoff
-	var SquareOffPayload = interactive.SquareOffRequest{
-		ExchangeSegment:               "NSECM",
-		ExchangeInstrumentID:          2029,
-		ProductType:                   "NRML",
-		SquareOffMode:                 "DayWise",
-		PositionSquareOffQuantityType: "ExactQty",
-		SquareOffQtyValue:             1,
-		BlockOrderSending:             "True",
-		CancelOrders:                  "True",
-	}
-	squareoff(SquareOffPayload)
+	// // Squareoff
+	// var SquareOffPayload = interactive.SquareOffRequest{
+	// 	ExchangeSegment:               "NSECM",
+	// 	ExchangeInstrumentID:          2029,
+	// 	ProductType:                   "NRML",
+	// 	SquareOffMode:                 "DayWise",
+	// 	PositionSquareOffQuantityType: "ExactQty",
+	// 	SquareOffQtyValue:             1,
+	// 	BlockOrderSending:             "True",
+	// 	CancelOrders:                  "True",
+	// }
+	// squareoff(SquareOffPayload)
 
-	// CancelAll
-	var cancelallPayload = interactive.CancelAllRequest{
-		ExchangeSegment:      "NSECM",
-		ExchangeInstrumentID: "2885",
-	}
-	cancelallorders(cancelallPayload)
+	// // CancelAll
+	// var cancelallPayload = interactive.CancelAllRequest{
+	// 	ExchangeSegment:      "NSECM",
+	// 	ExchangeInstrumentID: "2885",
+	// }
+	// cancelallorders(cancelallPayload)
 
-	// PositionConvert
-	var ConvertPositionPayload = interactive.ConvertPositionRequest{
-		ExchangeSegment:      "NSECM",
-		ExchangeInstrumentID: 11543,
-		OldProductType:       "NRML",
-		NewProductType:       "MIS",
-		IsDayWise:            true,
-		TargetQty:            1,
-		StatisticsLevel:      "ParentLevel",
-		IsInterOpPosition:    true,
-	}
-	convertPosition(ConvertPositionPayload)
+	// // PositionConvert
+	// var ConvertPositionPayload = interactive.ConvertPositionRequest{
+	// 	ExchangeSegment:      "NSECM",
+	// 	ExchangeInstrumentID: 11543,
+	// 	OldProductType:       "NRML",
+	// 	NewProductType:       "MIS",
+	// 	IsDayWise:            true,
+	// 	TargetQty:            1,
+	// 	StatisticsLevel:      "ParentLevel",
+	// 	IsInterOpPosition:    true,
+	// }
+	// convertPosition(ConvertPositionPayload)
 
-	// Squareoffall
-	var squareoffallPayload = interactive.SquareOffAllRequest{
-		SquareOffMode: "NetWise",
-		ClientID:      clientID,
-	}
-	squareoffall(squareoffallPayload)
+	// // Squareoffall
+	// var squareoffallPayload = interactive.SquareOffAllRequest{
+	// 	SquareOffMode: "NetWise",
+	// 	ClientID:      clientID,
+	// }
+	// squareoffall(squareoffallPayload)
 
-	// PlaceBracket Order
-	var bracketOrderPayload = interactive.BracketOrderRequest{
-		ClientID:              clientID,
-		OrderSide:             "BUY",
-		DisclosedQuantity:     0,
-		ExchangeSegment:       "NSECM",
-		ExchangeInstrumentID:  15083,
-		LimitPrice:            1495,
-		OrderType:             "LIMIT",
-		OrderQuantity:         25,
-		SquareOff:             10,
-		StopLossPrice:         10,
-		TrailingStopLoss:      0,
-		IsProOrder:            false,
-		OrderUniqueIdentifier: "adaniports_bracket",
-	}
-	placeBracketOrder(bracketOrderPayload)
+	// // PlaceBracket Order
+	// var bracketOrderPayload = interactive.BracketOrderRequest{
+	// 	ClientID:              clientID,
+	// 	OrderSide:             "BUY",
+	// 	DisclosedQuantity:     0,
+	// 	ExchangeSegment:       "NSECM",
+	// 	ExchangeInstrumentID:  15083,
+	// 	LimitPrice:            1495,
+	// 	OrderType:             "LIMIT",
+	// 	OrderQuantity:         25,
+	// 	SquareOff:             10,
+	// 	StopLossPrice:         10,
+	// 	TrailingStopLoss:      0,
+	// 	IsProOrder:            false,
+	// 	OrderUniqueIdentifier: "adaniports_bracket",
+	// }
+	// placeBracketOrder(bracketOrderPayload)
 
-	// ModifyBracket Order
-	var modifyBracketPayload = interactive.ModifyBracketOrderRequest{
-		ClientID:          clientID,
-		LimitPrice:        6790,
-		StopLossPrice:     10,
-		OrderQuantity:     2,
-		AppOrderID:        "1510901188",
-		ModifiedOrderType: "MARKET",
-	}
-	modifyBracketOrder(modifyBracketPayload)
+	// // ModifyBracket Order
+	// var modifyBracketPayload = interactive.ModifyBracketOrderRequest{
+	// 	ClientID:          clientID,
+	// 	LimitPrice:        6790,
+	// 	StopLossPrice:     10,
+	// 	OrderQuantity:     2,
+	// 	AppOrderID:        "1510901188",
+	// 	ModifiedOrderType: "MARKET",
+	// }
+	// modifyBracketOrder(modifyBracketPayload)
 
-	// CancelBracketOrder
-	var BoEntryOrderId = "1510900952"
-	cancelBO(BoEntryOrderId)
+	// // CancelBracketOrder
+	// var BoEntryOrderId = "1510900952"
+	// cancelBO(BoEntryOrderId)
+
+	// // PlaceCoverOrder
+	// var coverorderPayload = interactive.CoverOrderRequest{
+	// 	ExchangeSegment:       "NSECM",
+	// 	ExchangeInstrumentID:  3787,
+	// 	OrderSide:             "BUY",
+	// 	OrderQuantity:         15,
+	// 	DisclosedQuantity:     0,
+	// 	LimitPrice:            520,
+	// 	StopPrice:             470,
+	// 	OrderType:             "LIMIT",
+	// 	OrderUniqueIdentifier: "wipro_co",
+	// 	ClientID:              clientID,
+	// }
+	// placeCoverOrder(coverorderPayload)
+
+	// // ExitCoverOrder
+	// var exitcoverpayload = interactive.ExitCoverOrderRequest{
+	// 	AppOrderID: "1410903377",
+	// }
+	// exitcoverOrder(exitcoverpayload)
 
 	// PlaceCoverOrder
-	var coverorderPayload = interactive.CoverOrderRequest{
-		ExchangeSegment:       "NSECM",
-		ExchangeInstrumentID:  3787,
-		OrderSide:             "BUY",
-		OrderQuantity:         15,
-		DisclosedQuantity:     0,
-		LimitPrice:            520,
-		StopPrice:             470,
-		OrderType:             "LIMIT",
-		OrderUniqueIdentifier: "wipro_co",
-		ClientID:              clientID,
-	}
-	placeCoverOrder(coverorderPayload)
+	// var spreadorderPayload = interactive.SpreadOrderRequest{
+	// 	ExchangeSegment:          "NSEFO",
+	// 	ExchangeInstrumentID:     13620424,
+	// 	ProductType:              "NRML",
+	// 	Action:                   "Buy",
+	// 	OrderDuration:            "DAY",
+	// 	OrderQuantity:            75,
+	// 	SpreadPrice:              116,
+	// 	Leg1ExchangeSegment:      "NSEFO",
+	// 	Leg1ExchangeInstrumentID: 53001,
+	// 	Leg2ExchangeSegment:      "NSEFO",
+	// 	Leg2ExchangeInstrumentID: 52168,
+	// 	SpreadExchangeInstrumentID: 13620424,
+	// 	APIOrderSource:           "WEB",     // optional
+	// 	ClientID:                 clientID, // optional
+	// }
 
-	// ExitCoverOrder
-	var exitcoverpayload = interactive.ExitCoverOrderRequest{
-		AppOrderID: "1410903377",
-	}
-	exitcoverOrder(exitcoverpayload)
+	// placeSpreadOrder(spreadorderPayload)
 
-	// Logout
-	interactive.Logout()
+	//Calculate Brokerage
+
+	// // Logout
+	// interactive.Logout()
 }
+
+func websocketListner(){
+	interactive.On("order", func(data string) {
+		fmt.Println("Order data received:", data)
+	})
+	interactive.On("trade", func(data string) {
+		fmt.Println("Trade data received:", data)
+	})
+	interactive.On("position", func(data string) {
+		fmt.Println("Position data received:", data)
+	})
+	interactive.On("tradeConversion", func(data string) {
+		fmt.Println("Trade Conversion data received:", data)
+	})
+	interactive.On("joined", func(data string) {
+		fmt.Println("WS Joined:", data)
+	})
+	interactive.On("connect", func(data string) {
+		fmt.Println("WS Conencted:", data)
+	})
+	interactive.On("disconnect", func(data string) {
+		fmt.Println("WS Disconnected:", data)
+	})
+
+	interactive.Socket(url, Token, clientID)
+}
+
+func Hostlookup(hostlookupPayload interactive.HostlookupRequest) {
+	response, err := interactive.Hostlookup(url, hostlookupPayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	// clientID = response.Result.UserID
+	// Token = response.Result.Token
+	fmt.Println("Hostlookup Response-->", response)
+}
+
 
 func login(loginPayload interactive.LoginRequest) {
 	response, err := interactive.Login(url, loginPayload)
@@ -386,4 +472,22 @@ func exitcoverOrder(exitcoverpayload interactive.ExitCoverOrderRequest) {
 		return
 	}
 	fmt.Println("ExitCoverOrder Response-->", response)
+}
+
+func placeSpreadOrder(spreadorderPayload interactive.SpreadOrderRequest) {
+	response, err := interactive.PlaceSpreadOrder(spreadorderPayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("PlaceSpreadOrder Response-->", response)
+}
+
+func calculateBrokerage(calculateBrokeragePayload interactive.CalculateBrokerageRequest) {
+	response, err := interactive.CalculateBrokerage(calculateBrokeragePayload)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return
+	}
+	fmt.Println("PlaceSpreadOrder Response-->", response)
 }

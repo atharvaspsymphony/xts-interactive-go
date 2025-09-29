@@ -13,6 +13,25 @@ type GenericHeader struct {
 	Authorization string
 }
 
+type HostlookupRequest struct {
+	AccessPassword string `json:"AccessPassword"`
+	Version        string `json:"version"`
+}
+
+
+type HostLookupResult struct {
+	UniqueKey        string `json:"uniqueKey"`
+	ConnectionString string `json:"connectionString"`
+	TimeStamp        int64  `json:"timeStamp"`
+	Remarks          string `json:"remarks"`
+}
+
+type HostLookupResponse struct {
+	Type        bool             `json:"type"`
+	Description string           `json:"description"`
+	Result      HostLookupResult `json:"result"`
+}
+
 // LoginRequest represents the structure of the login request payload
 type LoginRequest struct {
 	SecretKey string `json:"secretKey"`
@@ -24,6 +43,8 @@ type LoginResponse struct {
 	GenericResponse
 	Result LoginResult `json:"result"`
 }
+
+
 
 // Result represents the structure of the result object in the response
 type LoginResult struct {
@@ -323,4 +344,67 @@ type CoverOrderResponse struct {
 
 type ExitCoverOrderRequest struct {
 	AppOrderID string `json:"appOrderID"`
+}
+
+
+type SpreadOrderRequest struct {
+	ClientID                 string  `json:"clientID"`
+	UserID                   string  `json:"userID"`
+	ExchangeSegment          string  `json:"exchangeSegment"`
+	ExchangeInstrumentID     int     `json:"exchangeInstrumentID"`
+	ProductType              string  `json:"productType"`
+	OrderType                string  `json:"orderType"`
+	Action                   string  `json:"action"`
+	OrderQuantity            int     `json:"quantity"`
+	OrderDuration            string  `json:"orderDuration"`
+	SpreadPrice              float64 `json:"spreadPrice"`
+	TotalPrice               float64 `json:"totalPrice"`
+	Leg1ExchangeSegment      string  `json:"leg1ExchangeSegment"`
+	Leg1ExchangeInstrumentID int     `json:"leg1ExchangeInstrumentID"`
+	Leg2ExchangeSegment      string  `json:"leg2ExchangeSegment"`
+	Leg2ExchangeInstrumentID int     `json:"leg2ExchangeInstrumentID"`
+	SpreadExchangeInstrumentID int   `json:"spreadExchangeInstrumentID"`
+	APIOrderSource           string  `json:"apiOrderSource"`
+}
+
+type SpreadOrderResponse struct {
+	Type        string `json:"type"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
+	Result      interface{} `json:"result"`
+}
+
+
+type BrokerageOrderInfo struct {
+	ExchangeSegment      int     `json:"exchangeSegment"`
+	ExchangeInstrumentID int     `json:"exchangeInstrumentID"`
+	ProductType          string  `json:"productType"`
+	OrderSide            string  `json:"orderSide"`
+	OrderQty             int     `json:"orderQty"`
+	OrderPrice           float64 `json:"orderPrice"`
+}
+
+type CalculateBrokerageRequest struct {
+	ClientID                 string               `json:"clientID"`
+	BrokerageOrderInformation []BrokerageOrderInfo `json:"brokerageOrderInformation"`
+}
+
+type CalculateBrokerageResponse struct {
+	Type        string `json:"type"`
+	Code        string `json:"code"`
+	Description string `json:"description"`
+	Result      struct {
+		BrokerageDeatils struct {
+			Brokerage                float64 `json:"Brokerage"`
+			STTOrCTT                 float64 `json:"STTOrCTT"`
+			ExchangeTurnoverCharges  float64 `json:"ExchangeTurnoverCharges"`
+			ExchangeCharges          float64 `json:"ExchangeCharges"`
+			GST                      float64 `json:"GST"`
+			SebiCharges              float64 `json:"SebiCharges"`
+			StampDuty                float64 `json:"StampDuty"`
+			ClearingCharges          float64 `json:"ClearingCharges"`
+			DPCharges                float64 `json:"DPCharges"`
+			Total                    float64 `json:"Total"`
+		} `json:"brokerageDeatils"`
+	} `json:"result"`
 }

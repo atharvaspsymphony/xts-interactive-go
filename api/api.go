@@ -16,6 +16,9 @@ var header = GenericHeader{
 
 // baseURL stores the base URL for the API.
 var baseURL string = ""
+var isHostlookupDone bool = false
+var uniqueKey string = ""
+var socketio_url string = ""
 
 // setHeaders sets common headers for a request.
 func setHeaders(req *http.Request) {
@@ -47,13 +50,59 @@ func parseJSONResponse(body []byte, v interface{}) error {
 	return json.Unmarshal(body, v)
 }
 
-// Login API.
-func Login(url string, payload LoginRequest) (*LoginResponse, error) {
+// Hostlookup API.
+func Hostlookup(url string, payload HostlookupRequest) (*HostLookupResponse, error) {
 	baseURL = url
 
 	jsonData, err := json.Marshal(payload)
 	if err != nil {
 		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", baseURL+interactiveRoutes["hostlookup"].(string), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var response HostLookupResponse
+	if err := parseJSONResponse(body, &response); err != nil {
+		return nil, err
+	}
+	if response.Type == true{
+		isHostlookupDone = true
+		baseURL = response.Result.ConnectionString
+		uniqueKey = response.Result.UniqueKey
+		fmt.Println("Hostlookup Response-->", baseURL, uniqueKey)
+
+	}
+	return &response, nil
+}
+
+// Login API.
+func Login(url string, payload LoginRequest) (*LoginResponse, error) {
+	jsonData, err := json.Marshal(payload)
+	if err != nil {
+		return nil, err
+	}
+	if isHostlookupDone == true {
+		// url = baseURL
+		var temp map[string]interface{}
+		if err := json.Unmarshal(jsonData, &temp); err != nil {
+			return nil, err
+		}
+		temp["uniqueKey"] = uniqueKey
+		jsonData, err = json.Marshal(temp)
+		if err != nil {
+			return nil, err
+		}
+	} else{
+		baseURL = url + "/interactive" 
 	}
 
 	req, err := http.NewRequest("POST", baseURL+interactiveRoutes["user.login"].(string), bytes.NewBuffer(jsonData))
@@ -71,6 +120,7 @@ func Login(url string, payload LoginRequest) (*LoginResponse, error) {
 	if err := parseJSONResponse(body, &response); err != nil {
 		return nil, err
 	}
+	socketio_url = baseURL
 
 	header.Authorization = response.Result.Token
 	return &response, nil
@@ -587,6 +637,58 @@ func ExitCoverOrder(exitcoverpayload ExitCoverOrderRequest) (*ModifyOrderRespons
 	}
 
 	var result ModifyOrderResponse
+	if err := parseJSONResponse(body, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// PlaceSpreadOrder API
+func PlaceSpreadOrder(spreadOrderPayload SpreadOrderRequest) (*SpreadOrderResponse, error) {
+	jsonData, err := json.Marshal(spreadOrderPayload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", baseURL+interactiveRoutes["order.spread"].(string), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var result SpreadOrderResponse
+	if err := parseJSONResponse(body, &result); err != nil {
+		return nil, err
+	}
+
+	return &result, nil
+}
+
+// CalculateBrokerage API
+func CalculateBrokerage(calculatebrokeragePayload CalculateBrokerageRequest) (*CalculateBrokerageResponse, error) {
+	jsonData, err := json.Marshal(calculatebrokeragePayload)
+	if err != nil {
+		return nil, err
+	}
+
+	req, err := http.NewRequest("POST", baseURL+interactiveRoutes["user.bokerage"].(string), bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, err
+	}
+	setHeaders(req)
+
+	body, err := doRequest(req)
+	if err != nil {
+		return nil, err
+	}
+
+	var result CalculateBrokerageResponse
 	if err := parseJSONResponse(body, &result); err != nil {
 		return nil, err
 	}

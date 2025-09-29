@@ -1,10 +1,12 @@
 package interactive
 
 var interactiveRoutes = map[string]interface{}{
-	"user.login":   "/interactive/user/session",
-	"user.logout":  "/interactive/user/session",
-	"user.balance": "/interactive/user/balance",
+	"hostlookup": "/hostlookup",
+	"user.login":   "/user/session",
+	"user.logout":  "/user/session",
+	"user.balance": "/user/balance",
 	"user.profile": "/interactive/user/profile",
+	"user.bokerage": "/interactive/user/calculatebrokerage",
 
 	"exchange.message": "/interactive/messages/exchange",
 	"exchange.status":  "/interactive/status/exchange",
@@ -14,6 +16,8 @@ var interactiveRoutes = map[string]interface{}{
 	"order.cancelall": "/interactive/orders/cancelall",
 	"order.bracket":   "/interactive/orders/bracket",
 	"order.cover":     "/interactive/orders/cover",
+
+	"order.spread": "/interactive/orders/spread",
 
 	"portfolio.holdings":        "/interactive/portfolio/holdings",
 	"portfolio.positions":       "/interactive/portfolio/positions",
