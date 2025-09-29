@@ -34,11 +34,11 @@ Initailize all the required constants & variables.
 call the Hostlookup API to get the connectionstring, this step is for load balancing
 POST /hostlookup
 ```go
-	var hostlookupPayload = interactive.HostlookupRequest{
-		AccessPassword: "2021HostLookUpAccess",
-		Version: "interactive_1.0.2",
-	}
-response, err := Hostlookup(hostlookupPayload)
+var hostlookupPayload = interactive.HostlookupRequest{
+    AccessPassword: "2021HostLookUpAccess",
+    Version: "interactive_1.0.2",
+}
+response, err := interactive.Hostlookup(url, hostlookupPayload)
 ```
 once hostlookup step is done, you can call login
 
