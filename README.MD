@@ -30,6 +30,18 @@ Initailize all the required constants & variables.
 
 ## Detailed explanation of API
 
+### Hostlookup
+call the Hostlookup API to get the connectionstring, this step is for load balancing
+POST /hostlookup
+```go
+	var hostlookupPayload = interactive.HostlookupRequest{
+		AccessPassword: "2021HostLookUpAccess",
+		Version: "interactive_1.0.2",
+	}
+response, err := Hostlookup(hostlookupPayload)
+```
+once hostlookup step is done, you can call login
+
 ### Login
 call the login API to generate the token
 POST /auth/login
@@ -248,6 +260,32 @@ This component provides functionality to access the socket related events. All r
 Note:- XTS Interactive WebSocket is based on "https://socket.io/" library. This library is available in most of the programming languages. In this package code third-party socket-io library is used to make client connection for socket. This is just an example to make connection for websocket.
 
 ```go
-response, err := interactive.Login(url, loginPayload)
-interactive.Socket(url, Token, clientID)
+func websocketListner(){
+	interactive.On("order", func(data string) {
+		fmt.Println("Order data received:", data)
+	})
+	interactive.On("trade", func(data string) {
+		fmt.Println("Trade data received:", data)
+	})
+	interactive.On("position", func(data string) {
+		fmt.Println("Position data received:", data)
+	})
+	interactive.On("tradeConversion", func(data string) {
+		fmt.Println("Trade Conversion data received:", data)
+	})
+	interactive.On("joined", func(data string) {
+		fmt.Println("WS Joined:", data)
+	})
+	interactive.On("connect", func(data string) {
+		fmt.Println("WS Conencted:", data)
+	})
+	interactive.On("disconnect", func(data string) {
+		fmt.Println("WS Disconnected:", data)
+	})
+
+	interactive.Socket(url, Token, clientID)
+}
+
+go websocketListner()
+select {}
 ```
